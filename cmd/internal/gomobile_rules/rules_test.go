@@ -212,6 +212,7 @@ const expectedDemoRules = header + `-keep,includedescriptorclasses class go.Seq 
 `
 
 func TestGenerateNamesEveryLookupExactly(t *testing.T) {
+	t.Parallel()
 	rules, err := Generate(jar(t, bindingClasses()))
 	if err != nil {
 		t.Fatal(err)
@@ -227,6 +228,7 @@ func TestGenerateNamesEveryLookupExactly(t *testing.T) {
 }
 
 func TestHostClassesAreNotRoots(t *testing.T) {
+	t.Parallel()
 	classes := bindingClasses()
 	classes["demo/HostCallback"] = testClass{name: "demo/HostCallback", access: accPublic, super: "java/lang/Object", interfaces: []string{"demo/Callback"}}
 	rules, err := Generate(jar(t, classes))
@@ -239,6 +241,7 @@ func TestHostClassesAreNotRoots(t *testing.T) {
 }
 
 func TestGeneratorInvariantsFailClosed(t *testing.T) {
+	t.Parallel()
 	cases := map[string]func(map[string]testClass){
 		"refnum constructor": func(c map[string]testClass) {
 			c["demo/Point"] = testClass{name: "demo/Point", super: "java/lang/Object", interfaces: []string{"go/Seq$Proxy"}}
@@ -264,6 +267,7 @@ func TestGeneratorInvariantsFailClosed(t *testing.T) {
 }
 
 func TestReplaceInAARKeepsEveryOtherEntryByteForByte(t *testing.T) {
+	t.Parallel()
 	directory := t.TempDir()
 	path := filepath.Join(directory, "libdemo.aar")
 	var original bytes.Buffer
@@ -339,6 +343,7 @@ func TestReplaceInAARKeepsEveryOtherEntryByteForByte(t *testing.T) {
 }
 
 func TestReplaceInAARRequiresTheGomobileEntries(t *testing.T) {
+	t.Parallel()
 	directory := t.TempDir()
 	path := filepath.Join(directory, "libdemo.aar")
 	var buffer bytes.Buffer
