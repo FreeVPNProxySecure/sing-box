@@ -50,7 +50,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '^1.25.0'
+          go-version: '1.25.9'
 
       - name: Setup Android NDK
         id: setup-ndk
@@ -66,9 +66,12 @@ jobs:
 
       - name: Install sagernet gomobile and init
         run: |
-          go install github.com/sagernet/gomobile/cmd/gomobile@latest
+          go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.12
           export PATH="$PATH:$(go env GOPATH)/bin"
           gomobile init
+          # gomobile init installs gobind@latest; generate the bindings with the pinned version.
+          go install github.com/sagernet/gomobile/cmd/gobind@v0.1.12
+          go version -m "$(go env GOPATH)/bin/gomobile" "$(go env GOPATH)/bin/gobind" | grep -E '^/|^\s+mod\s'
         env:
           JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
           ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
