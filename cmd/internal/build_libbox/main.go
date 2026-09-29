@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/sagernet/gomobile"
 	"github.com/sagernet/sing-box/cmd/internal/build_shared"
+	"github.com/sagernet/sing-box/cmd/internal/gomobile_rules"
 	"github.com/sagernet/sing-box/log"
 	E "github.com/sagernet/sing/common/exceptions"
 	"github.com/sagernet/sing/common/rw"
@@ -147,6 +148,9 @@ func buildAndroid() {
 	}
 
 	const name = "libbox.aar"
+	if err := gomobile_rules.ReplaceInAAR(name); err != nil {
+		log.Fatal(E.Cause(err, "write consumer keep rules"))
+	}
 	copyPath := filepath.Join("..", "sing-box-for-android", "app", "libs")
 	if rw.IsDir(copyPath) {
 		copyPath, _ = filepath.Abs(copyPath)

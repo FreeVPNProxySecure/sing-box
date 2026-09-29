@@ -50,7 +50,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: '^1.25.0'
+          go-version: '1.25.9'
 
       - name: Setup Android NDK
         id: setup-ndk
@@ -64,14 +64,16 @@ jobs:
           sudo apt-get install -y openjdk-17-jdk-headless
           java --version
 
-      - name: Install sagernet gomobile and init
+      - name: Install sagernet gomobile and gobind
         run: |
-          go install github.com/sagernet/gomobile/cmd/gomobile@latest
-          export PATH="$PATH:$(go env GOPATH)/bin"
-          gomobile init
-        env:
-          JAVA_HOME: /usr/lib/jvm/java-17-openjdk-amd64
-          ANDROID_NDK_HOME: ${{ steps.setup-ndk.outputs.ndk-path }}
+          # `gomobile init` would install gobind@latest; bind needs only gobind on PATH.
+          go install github.com/sagernet/gomobile/cmd/gomobile@v0.1.12 github.com/sagernet/gomobile/cmd/gobind@v0.1.12
+          for tool in gomobile gobind; do
+            info="$(go version -m "$(go env GOPATH)/bin/$tool")"
+            echo "$info"
+            grep -qxF "$(printf '\tpath\tgithub.com/sagernet/gomobile/cmd/%s' "$tool")" <<< "$info"
+            grep -qxF "$(printf '\tmod\tgithub.com/sagernet/gomobile\tv0.1.12\th1:XwzjZaclFF96deLqwAgK8gU3w0M2A8qxgDmhV+A0wjg=')" <<< "$info"
+          done
 
       - name: Build Android Library
         run: |
